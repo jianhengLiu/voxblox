@@ -302,6 +302,8 @@ void TsdfServer::processPointCloudMessageAndInsert(
     ROS_INFO("Integrating a pointcloud with %lu points.", points_C.size());
   }
 
+  static double time = 0;
+  static double count = 0;
   ros::WallTime start = ros::WallTime::now();
   integratePointcloud(T_G_C_refined, points_C, colors, is_freespace_pointcloud);
   ros::WallTime end = ros::WallTime::now();
@@ -309,6 +311,9 @@ void TsdfServer::processPointCloudMessageAndInsert(
     ROS_INFO("Finished integrating in %f seconds, have %lu blocks.",
              (end - start).toSec(),
              tsdf_map_->getTsdfLayer().getNumberOfAllocatedBlocks());
+    time += (end - start).toSec();
+    count++;
+    ROS_INFO("Avg time: %f seconds.", time / count);
   }
 
   timing::Timer block_remove_timer("remove_distant_blocks");
